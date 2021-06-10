@@ -384,6 +384,7 @@ class Piece:
             if event.button == 1:
                 if self.rect.collidepoint(event.pos) and game.turn == self.get_color():
                     self.drag = True
+                    print(self.possible_moves)
                     mouse_x, mouse_y = event.pos
                     self.offset_x = self.rect.x - mouse_x
                     self.offset_y = self.rect.y - mouse_y
@@ -425,11 +426,12 @@ class Piece:
                         if len(Goat_Pieces) < 11:
                             print("czarny wygral")  # win condition
                         self.on_board = True
+
                         self.update_moves()
                     else:
                         self.rect.x = self.x
                         self.rect.y = self.y
-                print(self.possible_moves)
+
                 self.drag = False
         elif event.type == pygame.MOUSEMOTION:
             if self.drag:
@@ -473,7 +475,7 @@ class Piece:
         else:
             piece_index = move[0] * 5 + move[1]
             target = move[2] * 5 + move[3]
-            if grid[piece_index] == 'b' or grid[piece_index] == 'w'and piece_index >= 0:
+            if grid[piece_index] == 'b' or grid[piece_index] == 'w' and piece_index >= 0:
                 grid[piece_index] = 'n'  # swapping piece on grid
             grid[target] = self.get_color()  # ^
             self.i = move[2]
@@ -506,7 +508,9 @@ for x in range(9):
     Goat_Pieces.append(goat)
 
 print(game.current_board)
-Goat_Pieces[3].make_a_move(game.current_board, Goat_Pieces, Tiger_Pieces, (-1, -1, 0, 1))
+Tiger_Pieces[0].make_a_move(Game.current_board, Goat_Pieces, Tiger_Pieces, (-1, -1, 0, 0))
+Goat_Pieces[0].make_a_move(Game.current_board, Goat_Pieces, Tiger_Pieces, (-1, -1, 0, 1))
+Tiger_Pieces[0].make_a_move(Game.current_board, Goat_Pieces, Tiger_Pieces, (0, 0, 0, 2,"C",0,1))
 print(game.current_board)
 
 while running:
