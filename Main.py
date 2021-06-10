@@ -74,7 +74,6 @@ class Game:
                     self.change_turn()
                     return True
 
-
         self.board_to_two_dimensions()
         return False
 
@@ -96,7 +95,7 @@ def dist_between_two_points(x1, y1, x2, y2):
 
 def highlight_pos(pos):
     for x in pos:
-        i = x[0] * 5 + x[1]
+        i = x[2] * 5 + x[3]
         pygame.draw.circle(screen, (72, 184, 0), [pozycje[i][0], pozycje[i][1]], game.board_size / 80)
 
 
@@ -178,7 +177,7 @@ class Piece:
     def is_capture(self, i, j):
         for move in self.possible_moves:
             if len(move) > 2:
-                if move[2] =="C" and move[0] == i and move[1] == j:
+                if move[2] == "C" and move[0] == i and move[1] == j:
                     return move
         return "N"
 
@@ -189,28 +188,28 @@ class Piece:
                 # ruchy w lewo
                 for j in range(self.j - 1, -1, -1):
                     if game.current_board_matrix[self.i][j] == 'n':
-                        self.possible_moves.append((self.i, j))
+                        self.possible_moves.append((self.i, self.j, self.i, j))
                     else:
                         break
 
                 # ruchy w prawo
                 for j in range(self.j + 1, 5):
                     if game.current_board_matrix[self.i][j] == 'n':
-                        self.possible_moves.append((self.i, j))
+                        self.possible_moves.append((self.i, self.j, self.i, j))
                     else:
                         break
 
                 # ruch w góre
                 for i in range(self.i + 1, 5):
                     if game.current_board_matrix[i][self.j] == 'n':
-                        self.possible_moves.append((i, self.j))
+                        self.possible_moves.append((self.i, self.j, i, self.j))
                     else:
                         break
 
                 # ruchy w dół
                 for i in range(self.i - 1, -1, -1):
                     if game.current_board_matrix[i][self.j] == 'n':
-                        self.possible_moves.append((i, self.j))
+                        self.possible_moves.append((self.i, self.j, i, self.j))
                     else:
                         break
 
@@ -222,7 +221,7 @@ class Piece:
                         if j > 4:
                             break
                         if game.current_board_matrix[i][j] == 'n':
-                            self.possible_moves.append((i, j))
+                            self.possible_moves.append((self.i, self.j, i, j))
                         else:
                             break
 
@@ -234,7 +233,7 @@ class Piece:
                         if i < 0:
                             break
                         if game.current_board_matrix[i][j] == 'n':
-                            self.possible_moves.append((i, j))
+                            self.possible_moves.append((self.i, self.j, i, j))
                         else:
                             break
 
@@ -246,7 +245,7 @@ class Piece:
                         if j < 0:
                             break
                         if game.current_board_matrix[i][j] == 'n':
-                            self.possible_moves.append((i, j))
+                            self.possible_moves.append((self.i, self.j, i, j))
                         else:
                             break
 
@@ -258,7 +257,7 @@ class Piece:
                         if j < 0:
                             break
                         if game.current_board_matrix[i][j] == 'n':
-                            self.possible_moves.append((i, j))
+                            self.possible_moves.append((self.i, self.j, i, j))
                         else:
                             break
 
@@ -266,57 +265,61 @@ class Piece:
                 if self.i < 3:
                     if game.current_board_matrix[self.i + 1][self.j] == 'w' and game.current_board_matrix[self.i + 2][
                         self.j] == 'n':
-                        self.possible_moves.append((self.i + 2, self.j, "C", self.i + 1, self.j))
+                        self.possible_moves.append((self.i, self.j, self.i + 2, self.j, "C", self.i + 1, self.j))
                 # BICIA OPONENTÓW W GÓRE:
                 if self.i > 1:
                     if game.current_board_matrix[self.i - 1][self.j] == 'w' and game.current_board_matrix[self.i - 2][
                         self.j] == 'n':
-                        self.possible_moves.append((self.i - 2, self.j, "C", self.i - 1, self.j))
+                        self.possible_moves.append((self.i, self.j, self.i - 2, self.j, "C", self.i - 1, self.j))
                 # left
                 if self.j < 3:
                     if game.current_board_matrix[self.i][self.j + 1] == 'w' and game.current_board_matrix[self.i][
                         self.j + 2] == 'n':
-                        self.possible_moves.append((self.i, self.j + 2, "C", self.i, self.j + 1))
+                        self.possible_moves.append((self.i, self.j, self.i, self.j + 2, "C", self.i, self.j + 1))
                 # right
                 if self.j > 1:
                     if game.current_board_matrix[self.i][self.j - 1] == 'w' and game.current_board_matrix[self.i][
                         self.j - 2]:
-                        self.possible_moves.append((self.i, self.j - 2, "C", self.i, self.j - 1))
+                        self.possible_moves.append((self.i, self.j, self.i, self.j - 2, "C", self.i, self.j - 1))
 
                 # right down
                 if (self.i * 5 + self.j) % 2 == 0:
                     if 3 > self.i and 3 > self.j:
                         if game.current_board_matrix[self.i + 1][self.j + 1] == 'w' and \
                                 game.current_board_matrix[self.i + 2][self.j + 2] == 'n':
-                            self.possible_moves.append((self.i + 2, self.j + 2, "C", self.i + 1, self.j + 1))
+                            self.possible_moves.append(
+                                (self.i, self.j, self.i + 2, self.j + 2, "C", self.i + 1, self.j + 1))
 
                 # right up
                 if (self.i * 5 + self.j) % 2 == 0:
                     if self.i > 1 and 3 > self.j:
                         if game.current_board_matrix[self.i - 1][self.j + 1] == 'w' and \
                                 game.current_board_matrix[self.i - 2][self.j + 2] == 'n':
-                            self.possible_moves.append((self.i - 2, self.j + 2, "C", self.i - 1, self.j + 1))
+                            self.possible_moves.append(
+                                (self.i, self.j, self.i - 2, self.j + 2, "C", self.i - 1, self.j + 1))
 
                 # left down
                 if (self.i * 5 + self.j) % 2 == 0:
                     if 3 > self.i and self.j > 1:
                         if game.current_board_matrix[self.i + 1][self.j - 1] == 'w' and \
                                 game.current_board_matrix[self.i + 2][self.j - 2] == 'n':
-                            self.possible_moves.append((self.i + 2, self.j - 2, "C", self.i + 1, self.j - 1))
+                            self.possible_moves.append(
+                                (self.i, self.j, self.i + 2, self.j - 2, "C", self.i + 1, self.j - 1))
 
                 # left up
                 if (self.i * 5 + self.j) % 2 == 0:
                     if self.i > 1 and self.j > 1:
                         if game.current_board_matrix[self.i - 1][self.j - 1] == 'w' and \
                                 game.current_board_matrix[self.i - 2][self.j - 2] == 'n':
-                            self.possible_moves.append((self.i - 2, self.j - 2, "C", self.i - 1, self.j - 1))
+                            self.possible_moves.append(
+                                (self.i, self.j, self.i - 2, self.j - 2, "C", self.i - 1, self.j - 1))
 
             elif game.turn_counter < 3 and self.on_board == 0:
                 self.possible_moves = []
                 for i in range(5):
                     for j in range(5):
                         if game.current_board_matrix[i][j] == 'n':
-                            self.possible_moves.append((i, j))
+                            self.possible_moves.append((self.i, self.j, i, j))
             else:
                 self.possible_moves = []
 
@@ -326,48 +329,48 @@ class Piece:
                 # up
                 if 4 > self.i:
                     if game.current_board_matrix[self.i + 1][self.j] == 'n':
-                        self.possible_moves.append((self.i + 1, self.j))
+                        self.possible_moves.append((self.i, self.j, self.i + 1, self.j))
                 # down
                 if self.i > 0:
                     if game.current_board_matrix[self.i - 1][self.j] == 'n':
-                        self.possible_moves.append((self.i - 1, self.j))
+                        self.possible_moves.append((self.i, self.j, self.i - 1, self.j))
                 # left
                 if 4 > self.j:
                     if game.current_board_matrix[self.i][self.j + 1] == 'n':
-                        self.possible_moves.append((self.i, self.j + 1))
+                        self.possible_moves.append((self.i, self.j, self.i, self.j + 1))
                 # right
                 if self.j > 0:
                     if game.current_board_matrix[self.i][self.j - 1] == 'n':
-                        self.possible_moves.append((self.i, self.j - 1))
+                        self.possible_moves.append((self.i, self.j, self.i, self.j - 1))
                 # right down
                 if (self.i * 5 + self.j) % 2 == 0:
                     if 4 > self.i and 4 > self.j:
                         if game.current_board_matrix[self.i + 1][self.j + 1] == 'n':
-                            self.possible_moves.append((self.i + 1, self.j + 1))
+                            self.possible_moves.append((self.i, self.j, self.i + 1, self.j + 1))
 
                 # right up
                 if (self.i * 5 + self.j) % 2 == 0:
                     if self.i > 0 and 4 > self.j:
                         if game.current_board_matrix[self.i - 1][self.j + 1] == 'n':
-                            self.possible_moves.append((self.i - 1, self.j + 1))
+                            self.possible_moves.append((self.i, self.j, self.i - 1, self.j + 1))
 
                 # left down
                 if (self.i * 5 + self.j) % 2 == 0:
                     if 4 > self.i and self.j > 0:
                         if game.current_board_matrix[self.i + 1][self.j - 1] == 'n':
-                            self.possible_moves.append((self.i + 1, self.j - 1))
+                            self.possible_moves.append((self.i, self.j, self.i + 1, self.j - 1))
 
                 # left up
                 if (self.i * 5 + self.j) % 2 == 0:
                     if self.i > 0 and self.j > 0:
                         if game.current_board_matrix[self.i - 1][self.j - 1] == 'n':
-                            self.possible_moves.append((self.i - 1, self.j - 1))
+                            self.possible_moves.append((self.i, self.j, self.i - 1, self.j - 1))
             elif game.turn_counter < 38 and self.on_board == 0:
                 self.possible_moves = []
                 for i in range(5):
                     for j in range(5):
                         if game.current_board_matrix[i][j] == 'n':
-                            self.possible_moves.append((i, j))
+                            self.possible_moves.append((self.i, self.j, i, j))
             else:
                 self.possible_moves = []
 
@@ -410,24 +413,23 @@ class Piece:
                                 if piece.i == very_temp[3] and piece.j == very_temp[4]:
                                     Goat_Pieces.remove(piece)
                                     break
-                            print(very_temp[3] * 5 + very_temp[4])
-                        counter =0
+                        counter = 0
                         for piece in Tiger_Pieces:
                             piece.update_moves()
-                            print(piece.possible_moves)
                             if len(piece.possible_moves) == 0:
                                 counter += 1
 
                         if counter == 2:
                             print("bialy wygral")
 
-                        if len(Goat_Pieces)<11:
-                            print("czarny wygral") # win condition
+                        if len(Goat_Pieces) < 11:
+                            print("czarny wygral")  # win condition
                         self.on_board = True
                         self.update_moves()
                     else:
                         self.rect.x = self.x
                         self.rect.y = self.y
+                print(self.possible_moves)
                 self.drag = False
         elif event.type == pygame.MOUSEMOTION:
             if self.drag:
@@ -440,6 +442,53 @@ class Piece:
             return 'b'
         else:
             return 'w'
+
+    def make_a_move(self, grid, goats, tigers, move):
+        if len(move) > 4:
+            piece_index = move[0] * 5 + move[1]
+            target = move[2] * 5 + move[3]
+            capture = move[5] * 5 + move[6]
+            if grid[piece_index] == 'b' or grid[piece_index] == 'w' and piece_index >= 0:
+                grid[piece_index] = 'n'  # swapping piece on grid
+            grid[target] = self.get_color()  # ^
+            grid[capture] = 'n'
+            self.i = move[2]
+            self.j = move[3]
+            for piece in goats:
+                if piece.i == move[5] and piece.j == move[6]:
+                    goats.remove(piece)
+                    break
+            counter = 0
+            for piece in Tiger_Pieces:
+                piece.update_moves()
+                if len(piece.possible_moves) == 0:
+                    counter += 1
+
+            if counter == 2:
+                print("bialy wygral")
+            if len(Goat_Pieces) < 11:
+                print("czarny wygral")  # win condition
+            self.on_board = True
+            self.update_moves()
+        else:
+            piece_index = move[0] * 5 + move[1]
+            target = move[2] * 5 + move[3]
+            if grid[piece_index] == 'b' or grid[piece_index] == 'w'and piece_index >= 0:
+                grid[piece_index] = 'n'  # swapping piece on grid
+            grid[target] = self.get_color()  # ^
+            self.i = move[2]
+            self.j = move[3]
+            counter = 0
+            for piece in tigers:
+                piece.update_moves()
+                if len(piece.possible_moves) == 0:
+                    counter += 1
+            if counter == 2:
+                print("bialy wygral")
+            if len(goats) < 11:
+                print("czarny wygral")  # win condition
+            self.on_board = True
+            self.update_moves()
 
 
 # init tiger pieces
@@ -455,6 +504,10 @@ for x in range(9):
 for x in range(9):
     goat = Piece(game.white_piece, game.prawy_gorny_x + game.board_size / 20 + 130, (x + 1) * 90)
     Goat_Pieces.append(goat)
+
+print(game.current_board)
+Goat_Pieces[3].make_a_move(game.current_board, Goat_Pieces, Tiger_Pieces, (-1, -1, 0, 1))
+print(game.current_board)
 
 while running:
 
