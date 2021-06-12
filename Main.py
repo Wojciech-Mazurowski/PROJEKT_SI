@@ -176,8 +176,8 @@ class Piece:
 
     def is_capture(self, i, j):
         for move in self.possible_moves:
-            if len(move) > 2:
-                if move[2] == "C" and move[0] == i and move[1] == j:
+            if len(move) > 5:
+                if move[4] == "C" and move[2] == i and move[3] == j:
                     return move
         return "N"
 
@@ -408,10 +408,10 @@ class Piece:
                         self.j = int(index_from_position(temp_pos) % 5)
                         very_temp = self.is_capture(self.i, self.j)
                         if very_temp != "N":
-                            game.current_board[very_temp[3] * 5 + very_temp[4]] = 'n'
+                            game.current_board[very_temp[5] * 5 + very_temp[6]] = 'n'
                             game.board_to_two_dimensions()
                             for piece in Goat_Pieces:
-                                if piece.i == very_temp[3] and piece.j == very_temp[4]:
+                                if piece.i == very_temp[5] and piece.j == very_temp[6]:
                                     Goat_Pieces.remove(piece)
                                     break
                         counter = 0
@@ -507,11 +507,7 @@ for x in range(9):
     goat = Piece(game.white_piece, game.prawy_gorny_x + game.board_size / 20 + 130, (x + 1) * 90)
     Goat_Pieces.append(goat)
 
-print(game.current_board)
-Tiger_Pieces[0].make_a_move(Game.current_board, Goat_Pieces, Tiger_Pieces, (-1, -1, 0, 0))
-Goat_Pieces[0].make_a_move(Game.current_board, Goat_Pieces, Tiger_Pieces, (-1, -1, 0, 1))
-Tiger_Pieces[0].make_a_move(Game.current_board, Goat_Pieces, Tiger_Pieces, (0, 0, 0, 2,"C",0,1))
-print(game.current_board)
+
 
 while running:
 
