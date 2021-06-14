@@ -69,9 +69,9 @@ def make_tree(curr_grid, test_piece, depth, goatNum, curr_turn):
     isBlack = False
     tigers_without_moves = 0
     for times in range(depth):
-        if tigers_without_moves == 2:
-            break
         for node in anytree.findall(Root, filter_=lambda node: node.is_leaf):
+            if tigers_without_moves == 2:
+                break
             if node.is_leaf:
                 if node.no_goats < 17:
                     if node.no_goats < 16:
