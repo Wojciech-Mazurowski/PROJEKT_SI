@@ -89,12 +89,16 @@ class Game:
                 return
             if self.turn == 'w':  # checks if its his turn
                 # print(self.current_board)
-                Root = TreeMaker_Test.make_tree(self.current_board, Piece((0, 0, 0), -1, -1), 4, self.goatNum,
+                Root = TreeMaker_Test.make_tree(self.current_board, Piece((0, 0, 0), -1, -1), 3, self.goatNum,
                                                 self.turn_counter)
                 best_alpha = TreeMaker_Test.alphabeta(Root, 4, -math.inf, math.inf, False)
                 # print(best_alpha)  # TESTING
-                move = best_alpha.ancestors[1].move_done
-                goatNum = best_alpha.ancestors[1].no_goats
+                if len(best_alpha.ancestors) == 1:
+                    move = best_alpha.move_done
+                    self.goatNum = best_alpha.no_goats
+                else:
+                    move = best_alpha.ancestors[1].move_done
+                    self.goatNum = best_alpha.ancestors[1].no_goats
                 for Goat in Goat_Pieces:
                     if Goat.i == move[0] and Goat.j == move[1]:
                         Goat.make_a_move(self.current_board, move)

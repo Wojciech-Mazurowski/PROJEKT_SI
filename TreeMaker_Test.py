@@ -67,7 +67,10 @@ def make_tree(curr_grid, test_piece, depth, goatNum, curr_turn):
     Goats = find_goats(Root.grid, Root.no_goats)
 
     isBlack = False
+    tigers_without_moves = 0
     for times in range(depth):
+        if tigers_without_moves == 2:
+            break
         for node in anytree.findall(Root, filter_=lambda node: node.is_leaf):
             if node.is_leaf:
                 if node.no_goats < 17:
@@ -77,9 +80,12 @@ def make_tree(curr_grid, test_piece, depth, goatNum, curr_turn):
                 Goats = find_goats(node.grid, node.no_goats)
 
                 if (isBlack):
+                    tigers_without_moves = 0
                     for Tiger in Tigers:
                         modify_Piece(Tiger, test_piece)
                         test_piece.update_moves(grid_to_two_dimensions(node.grid), turn_counter)
+                        if len(test_piece.possible_moves) == 0:
+                            tigers_without_moves += 1
                         for move in test_piece.possible_moves:
                             if len(move) > 4:
                                 new_no_goats = node.no_goats - 1
